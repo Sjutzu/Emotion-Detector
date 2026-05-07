@@ -1,7 +1,10 @@
 """
 Module for emotion recognition from text
 """
+import json
 import requests
+
+
 def emotion_detector(text_to_analyze):
     """ Function to analyze text """
     url = (
@@ -17,5 +20,7 @@ def emotion_detector(text_to_analyze):
         }
     }
     response = requests.post(url, headers=header, json=my_obj, timeout=30)
-    return response.text
-    
+    formatted_response = json.loads(response.text)
+    emotions = formatted_response['emotionPredictions'][0]['emotion']
+    emotions['dominant_emotion'] = max(emotions, key=emotions.get)
+    return emotions
